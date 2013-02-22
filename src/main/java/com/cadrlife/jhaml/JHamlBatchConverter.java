@@ -17,6 +17,7 @@ public class JHamlBatchConverter extends DirectoryWalker {
 	private String targetExtenstion = "jsp";
 	private boolean outputModificationWarning = true;
 	private Charset charset = Charset.defaultCharset();
+	private JHamlConfig config;
 	
 	public List<File> convertAllInPath(File startDirectory) throws IOException {
 		List<File> results = new ArrayList<File>();
@@ -28,8 +29,8 @@ public class JHamlBatchConverter extends DirectoryWalker {
 	protected void handleFile(File file, Collection<File> results) throws IOException {
 		if (file.getName().endsWith("." + hamlExtension)) {
 			String warning = warning(file.getName());
-			String gsp = new JHaml()
-					.parse(Files.toString(file, getCharset()));
+			JHaml haml = (config == null) ? new JHaml() : new JHaml(config);
+			String gsp = haml.parse(Files.toString(file, getCharset()));
 			String gspFileName = file.getAbsolutePath().replaceAll(
 					"\\." + Pattern.quote(hamlExtension) + "$", "." + targetExtenstion);
 			Files.write(warning + gsp, new File(gspFileName), getCharset());
@@ -87,4 +88,7 @@ public class JHamlBatchConverter extends DirectoryWalker {
 		return outputModificationWarning;
 	}
 
+	public void setConfig(JHamlConfig config) {
+		this.config = config;
+	}
 }
