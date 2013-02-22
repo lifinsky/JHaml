@@ -18,18 +18,17 @@ public class JHaml {
 	private Helper helper;
 	private int indentationSize = -1;
 	private boolean isIndentWithTabs = false;
-	private final JHamlConfig config;
-	
+
 	public JHaml() {
 		this(new JHamlConfig());
 	}
+
 	public JHaml(JHamlConfig config) {
-		this.config = config;
 		helper = new Helper(config);
+		helper.getErrorChecker().validateConfig(config);
 	}
 	
 	public String parse(String input) {
-		helper.getErrorChecker().validateConfig(this.config);
 		indentationSize = -1;
 		isIndentWithTabs = false;
 		if (StringUtils.isBlank(input.trim())) {
